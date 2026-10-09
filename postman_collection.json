@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Offline Sync Engine Test Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Create Document (Device A)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"initial_data\": {\n    \"title\": \"Original Title\",\n    \"author\": \"Alice\",\n    \"status\": \"DRAFT\"\n  }\n}"
+        },
+        "url": { "raw": "http://localhost:3000/api/v1/documents", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "documents"] }
+      }
+    },
+    {
+      "name": "2. Offline Update (Device B - Safe)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document_id\": \"<REPLACE_WITH_DOC_UUID>\",\n  \"device_id\": \"device-phone-01\",\n  \"base_version\": 1,\n  \"changes\": { \"status\": \"PUBLISHED\" }\n}"
+        },
+        "url": { "raw": "http://localhost:3000/api/v1/sync", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "sync"] }
+      }
+    },
+    {
+      "name": "3. Offline Update (Device A - Non-Conflicting Auto-Merge)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document_id\": \"<REPLACE_WITH_DOC_UUID>\",\n  \"device_id\": \"device-laptop-01\",\n  \"base_version\": 1,\n  \"changes\": { \"author\": \"Alice Smith\" }\n}"
+        },
+        "url": { "raw": "http://localhost:3000/api/v1/sync", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "sync"] }
+      }
+    },
+    {
+      "name": "4. Offline Update (Device B - Conflicting Edit)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document_id\": \"<REPLACE_WITH_DOC_UUID>\",\n  \"device_id\": \"device-phone-01\",\n  \"base_version\": 1,\n  \"changes\": { \"status\": \"ARCHIVED\" }\n}"
+        },
+        "url": { "raw": "http://localhost:3000/api/v1/sync", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "sync"] }
+      }
+    }
+  ]
+}
